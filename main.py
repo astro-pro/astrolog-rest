@@ -35,64 +35,67 @@ class TimeStep(Enum):
             raise ValueError("unknown enum value")
 
 
+class Method(Enum):
+    PLANET = "planet"
+    SECOND_FOCUS = "second_focus"
+    APO_APSIS = "apoapsis"
+    PERI_APSIS = "periapsis"
+    ASC_NODE = "ascending_node"
+    DSC_NODE = "descending_node"
+
+    def celestial(self, name: str):
+        if self == Method.PLANET:
+            return Planet(name)
+        elif self == Method.SECOND_FOCUS:
+            return SecondFocus(name)
+        elif self == Method.APO_APSIS:
+            return ApoApsis(name)
+        elif self == Method.PERI_APSIS:
+            return PeriApsis(name)
+        elif self == Method.ASC_NODE:
+            return AscNode(name)
+        elif self == Method.DSC_NODE:
+            return DscNode(name)
+        else
+            raise RuntimeError("unknown computation method")
+
+    def compute(self, name: str, place: str, date: datetime):
+        location = GeoLocation.PLACES.get(place.capitalize())
+        if location is None:
+            raise RuntimeError(f"unknown geographic location ${place}")
+        celestial = self.celestial(name)
+        coord = celestial.equator_speed(date, location)
+        return { "celestial": name, "type": self, "place": place, "date": date, "position": coord.json() }
+
+
 @app.get("/{planet_name}/topo/{place}/pos/{date}")
 async def planet_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = Planet(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.PLANET.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/second-focus/{date}")
 async def bs_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = SecondFocus(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.SECOND_FOCUS.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/apoapsis/{date}")
 async def apo_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = ApoApsis(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.APO_APSIS.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/peroapsis/{date}")
 async def peri_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = PeriApsis(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.PERI_APSIS.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/asc-node/{date}")
 async def asc_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = AscNode(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.ASC_NODE.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/dsc-node/{date}")
 async def dsc_pos(planet_name: str, place: str, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    if location is None:
-        raise NameError(place)
-    planet = DscNode(planet_name)
-    coord = planet.equator_speed(date, location)
-    return coord.json()
+    return Method.DSC_NODE.compute(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/pos/{date}")
