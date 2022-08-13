@@ -1,14 +1,21 @@
 [tool.poetry]
-name = "pyswe-rest"
+name = "astrolog-rest"
 version = "0.1.0"
-description = ""
+description = "REST API for swiss epehemris"
 authors = ["Ign. Aiom Ominous <aiom.ominous@gmail.com>"]
+keywords = ["astronomy", "swisseph", "astrology", "swissephemeris", "REST"]
+classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: Developers", "Intended Audience :: Science/Research",
+               "License :: OSI Approved :: BSD License", "Topic :: Scientific/Engineering :: Astronomy"]
+license = "BSD-4-Clause"
+
+[tool.poetry.urls]
+repository = "https://github.com/astro-pro/astrolog-rest"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.79.0"
 uvicorn = "^0.18.2"
-astrolog = { path = "../astrolog" }
+astrolog = "^0.5"
 
 [tool.poetry.dev-dependencies]
 

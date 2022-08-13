@@ -17,20 +17,15 @@ doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme", "packaging"]
 
 [[package]]
 name = "astrolog"
-version = "0.4.3"
+version = "0.5.0"
 description = "High-level astrology methods based on Swiss Ephemeris"
 category = "main"
 optional = false
-python-versions = "^3.10"
-develop = false
+python-versions = ">=3.10,<4.0"
 
 [package.dependencies]
-dms2dec = "^0.1"
-pyswisseph = "=2.10.02.0.dev1"
-
-[package.source]
-type = "directory"
-url = "../astrolog"
+dms2dec = ">=0.1,<0.2"
+pyswisseph = "2.10.02.0.dev1"
 
 [[package]]
 name = "click"
@@ -164,14 +159,17 @@ standard = ["colorama (>=0.4)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "PyYAML (
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2a2e25de8fa2f8e5283012308c845bae914088616b8be3b9fc4cddd9576e31c9"
+content-hash = "1355a0507fe69aef569dfcb516d20923dc23c63a5b93c0cba393dd887d0fe1dc"
 
 [metadata.files]
 anyio = [
     {file = "anyio-3.6.1-py3-none-any.whl", hash = "sha256:cb29b9c70620506a9a8f87a309591713446953302d7d995344d0d7c6c0c9a7be"},
     {file = "anyio-3.6.1.tar.gz", hash = "sha256:413adf95f93886e442aea925f3ee43baa5a765a64a0f52c6081894f9992fdd0b"},
 ]
-astrolog = []
+astrolog = [
+    {file = "astrolog-0.5.0-py3-none-any.whl", hash = "sha256:d8754a1a8736d4b4b7f655f54d189a80dd1fe9bed73b2c4800eaba4a9ac51442"},
+    {file = "astrolog-0.5.0.tar.gz", hash = "sha256:7c99a99f38856d55b207ec246a33141920527c10beb803101812aeaad7d779db"},
+]
 click = [
     {file = "click-8.1.3-py3-none-any.whl", hash = "sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48"},
     {file = "click-8.1.3.tar.gz", hash = "sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e"},
