@@ -1,9 +1,14 @@
+import os
 from datetime import datetime, timedelta
 from enum import Enum
 from fastapi.middleware.cors import CORSMiddleware
 
 from astrolog import GeoLocation, Planet, SecondFocus, ApoApsis, AscNode, DscNode, PeriApsis
 from fastapi import FastAPI
+import swisseph as swe
+
+SWISSEPH = os.getenv("SWISSEPH", "/usr/local/share/swisseph")
+swe.set_ephe_path(SWISSEPH)
 
 app = FastAPI()
 

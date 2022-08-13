@@ -15,6 +15,7 @@ repository = "https://github.com/astro-pro/astrolog-rest"
 python = "^3.10"
 fastapi = "^0.79.0"
 astrolog = "^0.5"
+pyswisseph = "=2.10.02.0.dev1"
 
 [tool.poetry.dev-dependencies]
 uvicorn = "^0.18.2"
