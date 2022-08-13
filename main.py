@@ -56,10 +56,10 @@ class Method(Enum):
             return AscNode(name)
         elif self == Method.DSC_NODE:
             return DscNode(name)
-        else
+        else:
             raise RuntimeError("unknown computation method")
 
-    def compute(self, name: str, place: str, date: datetime):
+    def position(self, name: str, place: str, date: datetime):
         location = GeoLocation.PLACES.get(place.capitalize())
         if location is None:
             raise RuntimeError(f"unknown geographic location ${place}")
@@ -67,49 +67,78 @@ class Method(Enum):
         coord = celestial.equator_speed(date, location)
         return { "celestial": name, "type": self, "place": place, "date": date, "position": coord.json() }
 
+    def path(self, name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime,
+                    date: datetime):
+        location = GeoLocation.PLACES.get(place.capitalize())
+        data = self.position(name, place, date)
+        planet = self.celestial(name)
+        path = []
+        delta = time_step.timedelta(time_delta)
+        dt = start
+        while dt < till:
+            json = planet.equator_speed(dt, location).json()
+            json['ts'] = dt
+            path.append(json)
+            dt += delta
+        data["path"] = path
+        return data
+
 
 @app.get("/{planet_name}/topo/{place}/pos/{date}")
 async def planet_pos(planet_name: str, place: str, date: datetime):
-    return Method.PLANET.compute(planet_name, place, date)
+    return Method.PLANET.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/second-focus/{date}")
-async def bs_pos(planet_name: str, place: str, date: datetime):
-    return Method.SECOND_FOCUS.compute(planet_name, place, date)
+async def sf_pos(planet_name: str, place: str, date: datetime):
+    return Method.SECOND_FOCUS.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/apoapsis/{date}")
 async def apo_pos(planet_name: str, place: str, date: datetime):
-    return Method.APO_APSIS.compute(planet_name, place, date)
+    return Method.APO_APSIS.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/peroapsis/{date}")
 async def peri_pos(planet_name: str, place: str, date: datetime):
-    return Method.PERI_APSIS.compute(planet_name, place, date)
+    return Method.PERI_APSIS.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/asc-node/{date}")
 async def asc_pos(planet_name: str, place: str, date: datetime):
-    return Method.ASC_NODE.compute(planet_name, place, date)
+    return Method.ASC_NODE.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/dsc-node/{date}")
 async def dsc_pos(planet_name: str, place: str, date: datetime):
-    return Method.DSC_NODE.compute(planet_name, place, date)
+    return Method.DSC_NODE.position(planet_name, place, date)
 
 
 @app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/pos/{date}")
 async def planet_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
-    location = GeoLocation.PLACES.get(place.capitalize())
-    coord = await planet_pos(planet_name, place, date)
-    planet = Planet(planet_name)
-    path = []
+    return Method.PLANET.path(planet_name, place, time_step, time_delta, start, till, date)
 
-    delta = time_step.timedelta(time_delta)
-    dt = start
-    while dt < till:
-        json = planet.equator_speed(dt, location).json()
-        json['ts'] = dt
-        path.append(json)
-        dt += delta
-    return {"coord": coord, "path": path}
+
+@app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/second-focus/{date}")
+async def sf_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
+    return Method.SECOND_FOCUS.path(planet_name, place, time_step, time_delta, start, till, date)
+
+
+@app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/apoapsis/{date}")
+async def apo_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
+    return Method.APO_APSIS.path(planet_name, place, time_step, time_delta, start, till, date)
+
+
+@app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/periapsis/{date}")
+async def peri_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
+    return Method.PERI_APSIS.path(planet_name, place, time_step, time_delta, start, till, date)
+
+
+@app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/asc-node/{date}")
+async def asc_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
+    return Method.ASC_NODE.path(planet_name, place, time_step, time_delta, start, till, date)
+
+
+@app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/dsc-node/{date}")
+async def dsc_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
+    return Method.DSC_NODE.path(planet_name, place, time_step, time_delta, start, till, date)
