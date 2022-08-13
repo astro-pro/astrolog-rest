@@ -17,7 +17,7 @@ doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme", "packaging"]
 
 [[package]]
 name = "astrolog"
-version = "0.3.4"
+version = "0.4.3"
 description = "High-level astrology methods based on Swiss Ephemeris"
 category = "main"
 optional = false

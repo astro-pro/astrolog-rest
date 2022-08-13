@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from enum import Enum
 
-from astrolog import GeoLocation, NatalObject, Planet
+from astrolog import GeoLocation, Planet, SecondFocus, ApoApsis, AscNode, DscNode, PeriApsis
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -41,6 +41,56 @@ async def planet_pos(planet_name: str, place: str, date: datetime):
     if location is None:
         raise NameError(place)
     planet = Planet(planet_name)
+    coord = planet.equator_speed(date, location)
+    return coord.json()
+
+
+@app.get("/{planet_name}/topo/{place}/second-focus/{date}")
+async def bs_pos(planet_name: str, place: str, date: datetime):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise NameError(place)
+    planet = SecondFocus(planet_name)
+    coord = planet.equator_speed(date, location)
+    return coord.json()
+
+
+@app.get("/{planet_name}/topo/{place}/apoapsis/{date}")
+async def apo_pos(planet_name: str, place: str, date: datetime):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise NameError(place)
+    planet = ApoApsis(planet_name)
+    coord = planet.equator_speed(date, location)
+    return coord.json()
+
+
+@app.get("/{planet_name}/topo/{place}/peroapsis/{date}")
+async def peri_pos(planet_name: str, place: str, date: datetime):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise NameError(place)
+    planet = PeriApsis(planet_name)
+    coord = planet.equator_speed(date, location)
+    return coord.json()
+
+
+@app.get("/{planet_name}/topo/{place}/asc-node/{date}")
+async def asc_pos(planet_name: str, place: str, date: datetime):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise NameError(place)
+    planet = AscNode(planet_name)
+    coord = planet.equator_speed(date, location)
+    return coord.json()
+
+
+@app.get("/{planet_name}/topo/{place}/dsc-node/{date}")
+async def dsc_pos(planet_name: str, place: str, date: datetime):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise NameError(place)
+    planet = DscNode(planet_name)
     coord = planet.equator_speed(date, location)
     return coord.json()
 
