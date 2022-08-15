@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from fastapi.middleware.cors import CORSMiddleware
 
-from astrolog import GeoLocation, Planet, SecondFocus, ApoApsis, AscNode, DscNode, PeriApsis
+from astrolog import GeoLocation, Planet, SecondFocus, ApoApsis, AscNode, DscNode, PeriApsis, FixedCelestial
 from fastapi import FastAPI
 import swisseph as swe
 
@@ -156,3 +156,13 @@ async def asc_path(planet_name: str, place: str, time_step: TimeStep, time_delta
 @app.get("/{planet_name}/topo/{place}/{time_step}/{time_delta}/{start}/{till}/dsc-node/{date}")
 async def dsc_path(planet_name: str, place: str, time_step: TimeStep, time_delta: int, start: datetime, till: datetime, date: datetime):
     return Method.DSC_NODE.path(planet_name, place, time_step, time_delta, start, till, date)
+
+
+@app.get("/topo/{place}/{date}")
+async def dsc_path(place: str, date: datetime, celestials: str):
+    location = GeoLocation.PLACES.get(place.capitalize())
+    if location is None:
+        raise RuntimeError(f"unknown geographic location ${place}")
+    celestials = celestials.split(',')
+    celestials = {name: FixedCelestial(name, name).equator_coord(date, location).json() for name in celestials}
+    return {"place": place, "date": date, "celestials": celestials}
