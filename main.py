@@ -164,5 +164,8 @@ async def dsc_path(place: str, date: datetime, celestials: str):
     if location is None:
         raise RuntimeError(f"unknown geographic location ${place}")
     celestials = celestials.split(',')
-    celestials = {name: FixedCelestial(name, name).equator_coord(date, location).json() for name in celestials}
+    celestials = [
+        {"name": name} |
+        FixedCelestial(name, name).equator_coord(date, location).json() for name in celestials
+    ]
     return {"place": place, "date": date, "celestials": celestials}
