@@ -159,7 +159,7 @@ async def dsc_path(planet_name: str, place: str, time_step: TimeStep, time_delta
 
 
 @app.get("/topo/{place}/{date}")
-async def dsc_path(place: str, date: datetime, celestials: str):
+async def fixed_pos(place: str, date: datetime, celestials: str):
     location = GeoLocation.PLACES.get(place.capitalize())
     if location is None:
         raise RuntimeError(f"unknown geographic location ${place}")
